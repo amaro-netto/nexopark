@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "AIn4YKajARY=",
+  "dgSpecHash": "kAmA6JJrVaU=",
   "success": true,
   "projectFilePath": "B:\\Projetos\\nexopark\\src\\NexoPark.Core\\NexoPark.Core.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\Amaro\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512"
+  ],
   "logs": []
 }

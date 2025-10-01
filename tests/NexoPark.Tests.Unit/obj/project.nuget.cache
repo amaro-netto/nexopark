@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "sJIFZhFRNps=",
+  "dgSpecHash": "3Adklzn41Rw=",
   "success": true,
   "projectFilePath": "B:\\Projetos\\nexopark\\tests\\NexoPark.Tests.Unit\\NexoPark.Tests.Unit.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Amaro\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\Amaro\\.nuget\\packages\\coverlet.collector\\6.0.2\\coverlet.collector.6.0.2.nupkg.sha512",
     "C:\\Users\\Amaro\\.nuget\\packages\\microsoft.codecoverage\\17.12.0\\microsoft.codecoverage.17.12.0.nupkg.sha512",
     "C:\\Users\\Amaro\\.nuget\\packages\\microsoft.net.test.sdk\\17.12.0\\microsoft.net.test.sdk.17.12.0.nupkg.sha512",

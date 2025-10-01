@@ -22,6 +22,7 @@ TestResults/
 *.log
 *.tmp
 [Tt]emp/
+pgdata
 
 # Variáveis de Ambiente e Segredos
 .env

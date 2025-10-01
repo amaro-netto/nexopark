@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "QfSB4cv0A78=",
+  "dgSpecHash": "UW/kL0S+kMg=",
   "success": true,
   "projectFilePath": "B:\\Projetos\\nexopark\\src\\NexoPark.Infra\\NexoPark.Infra.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Amaro\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\Amaro\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\Amaro\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\7.0.0\\microsoft.bcl.asyncinterfaces.7.0.0.nupkg.sha512",
     "C:\\Users\\Amaro\\.nuget\\packages\\microsoft.build.framework\\17.8.3\\microsoft.build.framework.17.8.3.nupkg.sha512",
