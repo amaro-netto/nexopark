@@ -1,0 +1,29 @@
+sequenceDiagram
+    participant C as Cliente/Usuário
+    participant API as NexoPark.API
+    participant Core as NexoPark.Core (Services)
+    participant Infra as NexoPark.Infra (Repository/DB)
+
+    C->>API: POST /login (Credenciais)
+    API->>Core: Validar Credenciais
+    Core->>Infra: Buscar Administrador + Verificar Senha Hashed
+    Infra-->>Core: Resultado da Busca
+    alt Credenciais Válidas
+        Core-->>API: Administrador Válido + Perfil (Role)
+        API->>API: Gerar JWT
+        API-->>C: Token JWT (Bearer)
+        
+        C->>API: GET /veiculos (Header: Authorization: Bearer <Token>)
+        API->>API: Validar JWT + Autorização (Role)
+        alt Autorizado
+            API->>Core: Listar Veículos
+            Core->>Infra: Buscar Veículos
+            Infra-->>Core: Lista de Veículos
+            Core-->>API: Lista de Veículos
+            API-->>C: 200 OK + Lista
+        else Não Autorizado
+            API-->>C: 403 Forbidden
+        end
+    else Credenciais Inválidas
+        API-->>C: 401 Unauthorized
+    end

@@ -1,0 +1,29 @@
+# Arquivos e pastas do Visual Studio
+.vs/
+*.suo
+*.user
+*.useros
+*.sln.docstates
+
+# Arquivos de Build .NET/C#
+[Bb]in/
+[Oo]bj/
+*.pdb
+*.orig
+*.lock.json
+*.nuget.g.props
+*.nuget.g.targets
+
+# Arquivos de Testes
+TestResults/
+.trx
+
+# Arquivos de cache e logs
+*.log
+*.tmp
+[Tt]emp/
+
+# Variáveis de Ambiente e Segredos
+.env
+*.env
+appsettings.Development.json # Frequentemente usado para secrets locais
