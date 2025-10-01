@@ -123,8 +123,12 @@ app.UseAuthorization();
 app.MapPost("/login", async (LoginRequest request, IAuthService authService) =>
 {
     var response = await authService.LoginAsync(request);
+    
+    // Agora o servidor retornará o token real do AuthService (que é uma string longa).
     return response == null ? Results.Unauthorized() : Results.Ok(response);
-}); // Finaliza com ; (Ponto e vírgula)
+})
+.AllowAnonymous(); // MANTÉM .AllowAnonymous()
+
 
 // 2. Rota Protegida com Autorização (TESTE 1: Acesso somente para Admin)
 app.MapGet("/admin-only", (HttpContext http) =>
