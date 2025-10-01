@@ -1,15 +1,15 @@
 using System.Security.Claims;
 using System.Text;
 using DotNetEnv;
-using Microsoft.AspNetCore.Authentication.JwtBearer; // Necessário para JwtBearerDefaults
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens; // Necessário para SymmetricSecurityKey, TokenValidationParameters
-using Microsoft.OpenApi.Models; 
-using NexoPark.Core.Constants; // <-- Crucial para AppRoles (Passo 3.4)
-using NexoPark.Core.DTOs; // <-- DTOs (Passo 3.1)
-using NexoPark.Core.Services; // <-- IAuthService, IJwtService (Passo 3.1)
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using NexoPark.Core.Constants;
+using NexoPark.Core.DTOs;
+using NexoPark.Core.Services;
 using NexoPark.Infra.Context;
-using NexoPark.Infra.Services; // <-- AuthService, JwtService (Passo 3.1)
+using NexoPark.Infra.Services;
 
 // 1. Carrega as variáveis do .env (DB e JWT)
 Env.Load();
@@ -53,8 +53,16 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Adicionar Serviço de Autorização
-builder.Services.AddAuthorization();
+// Adicionar Serviço de Autorização e Políticas Baseadas em Roles
+builder.Services.AddAuthorization(options =>
+{
+    // Política para usuários com perfil Admin (acesso total)
+    options.AddPolicy("RequireAdminRole", policy => policy.RequireRole(AppRoles.Admin));
+    
+    // Política para usuários com perfil Admin OU Editor (acesso básico/escrita)
+    options.AddPolicy("RequireEditorOrAdmin", policy => 
+        policy.RequireRole(AppRoles.Editor, AppRoles.Admin));
+});
 
 
 // Registrar Serviços para Injeção de Dependência (DIP)
@@ -76,17 +84,20 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "Bearer"
     });
 
-    // Define o requisito de segurança global
+    // Bloco COMENTADO para resolver o erro CS0103.
+    // A funcionalidade de segurança no Swagger UI não estará visível, mas a API funciona.
+    /*
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference { Type = OpenApiReferenceType.SecurityScheme, Id = "Bearer" }
+                Reference = new OpenApiReference { Type = OpenApiReferenceType.SecurityScheme, Id = "Bearer" } 
             },
             Array.Empty<string>()
         }
     });
+    */
 });
 
 var app = builder.Build();
@@ -109,21 +120,25 @@ app.MapPost("/login", async (LoginRequest request, IAuthService authService) =>
 {
     var response = await authService.LoginAsync(request);
     return response == null ? Results.Unauthorized() : Results.Ok(response);
-})
-.WithOpenApi();
+}); // Finaliza com ; (Ponto e vírgula)
 
-// 2. Rota Protegida (Exemplo Básico)
-app.MapGet("/me", (HttpContext http) =>
+// 2. Rota Protegida com Autorização (TESTE 1: Acesso somente para Admin)
+app.MapGet("/admin-only", (HttpContext http) =>
 {
-    // Captura as claims (informações) do usuário logado
     var email = http.User.FindFirst(ClaimTypes.Name)?.Value;
-    var role = http.User.FindFirst(ClaimTypes.Role)?.Value;
-    return Results.Ok(new { message = $"Autenticado como: {email}", role = role });
+    return Results.Ok($"Bem-vindo, Admin {email}! Acesso exclusivo.");
 })
-.RequireAuthorization() // Exige autenticação
-.WithOpenApi();
+.RequireAuthorization("RequireAdminRole"); // Finaliza com ;
+
+// 3. Rota Protegida com Autorização (TESTE 2: Acesso para Admin ou Editor)
+app.MapGet("/editor-or-admin", (HttpContext http) =>
+{
+    var email = http.User.FindFirst(ClaimTypes.Name)?.Value;
+    return Results.Ok($"Bem-vindo, {http.User.FindFirst(ClaimTypes.Role)?.Value} {email}! Acesso de Leitura/Escrita.");
+})
+.RequireAuthorization("RequireEditorOrAdmin"); // Finaliza com ;
 
 // Rota Home
-app.MapGet("/", () => "NexoPark API está rodando!").WithOpenApi();
+app.MapGet("/", () => "NexoPark API está rodando!"); // Finaliza com ;
 
 app.Run();
