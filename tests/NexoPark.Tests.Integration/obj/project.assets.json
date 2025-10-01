@@ -411,6 +411,46 @@
         "build": {
           "build/net6.0/xunit.runner.visualstudio.props": {}
         }
+      },
+      "NexoPark.API/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "NexoPark.Core": "1.0.0",
+          "NexoPark.Infra": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/NexoPark.API.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/NexoPark.API.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
+      },
+      "NexoPark.Core/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "compile": {
+          "bin/placeholder/NexoPark.Core.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/NexoPark.Core.dll": {}
+        }
+      },
+      "NexoPark.Infra/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "NexoPark.Core": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/NexoPark.Infra.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/NexoPark.Infra.dll": {}
+        }
       }
     }
   },
@@ -932,11 +972,28 @@
         "xunit.runner.visualstudio.2.8.2.nupkg.sha512",
         "xunit.runner.visualstudio.nuspec"
       ]
+    },
+    "NexoPark.API/1.0.0": {
+      "type": "project",
+      "path": "../../src/NexoPark.API/NexoPark.API.csproj",
+      "msbuildProject": "../../src/NexoPark.API/NexoPark.API.csproj"
+    },
+    "NexoPark.Core/1.0.0": {
+      "type": "project",
+      "path": "../../src/NexoPark.Core/NexoPark.Core.csproj",
+      "msbuildProject": "../../src/NexoPark.Core/NexoPark.Core.csproj"
+    },
+    "NexoPark.Infra/1.0.0": {
+      "type": "project",
+      "path": "../../src/NexoPark.Infra/NexoPark.Infra.csproj",
+      "msbuildProject": "../../src/NexoPark.Infra/NexoPark.Infra.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net9.0": [
       "Microsoft.NET.Test.Sdk >= 17.12.0",
+      "NexoPark.API >= 1.0.0",
+      "NexoPark.Core >= 1.0.0",
       "coverlet.collector >= 6.0.2",
       "xunit >= 2.9.2",
       "xunit.runner.visualstudio >= 2.8.2"
@@ -966,7 +1023,14 @@
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "B:\\Projetos\\nexopark\\src\\NexoPark.API\\NexoPark.API.csproj": {
+              "projectPath": "B:\\Projetos\\nexopark\\src\\NexoPark.API\\NexoPark.API.csproj"
+            },
+            "B:\\Projetos\\nexopark\\src\\NexoPark.Core\\NexoPark.Core.csproj": {
+              "projectPath": "B:\\Projetos\\nexopark\\src\\NexoPark.Core\\NexoPark.Core.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

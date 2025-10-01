@@ -1,11 +1,49 @@
 {
   "version": 3,
   "targets": {
-    "net9.0": {}
+    "net9.0": {
+      "NexoPark.Core/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "compile": {
+          "bin/placeholder/NexoPark.Core.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/NexoPark.Core.dll": {}
+        }
+      },
+      "NexoPark.Infra/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "NexoPark.Core": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/NexoPark.Infra.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/NexoPark.Infra.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "NexoPark.Core/1.0.0": {
+      "type": "project",
+      "path": "../NexoPark.Core/NexoPark.Core.csproj",
+      "msbuildProject": "../NexoPark.Core/NexoPark.Core.csproj"
+    },
+    "NexoPark.Infra/1.0.0": {
+      "type": "project",
+      "path": "../NexoPark.Infra/NexoPark.Infra.csproj",
+      "msbuildProject": "../NexoPark.Infra/NexoPark.Infra.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    "net9.0": []
+    "net9.0": [
+      "NexoPark.Core >= 1.0.0",
+      "NexoPark.Infra >= 1.0.0"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\Amaro\\.nuget\\packages\\": {}
@@ -13,11 +51,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "B:\\Projetos\\nexopark\\NexoPark.API\\NexoPark.API.csproj",
+      "projectUniqueName": "B:\\Projetos\\nexopark\\src\\NexoPark.API\\NexoPark.API.csproj",
       "projectName": "NexoPark.API",
-      "projectPath": "B:\\Projetos\\nexopark\\NexoPark.API\\NexoPark.API.csproj",
+      "projectPath": "B:\\Projetos\\nexopark\\src\\NexoPark.API\\NexoPark.API.csproj",
       "packagesPath": "C:\\Users\\Amaro\\.nuget\\packages\\",
-      "outputPath": "B:\\Projetos\\nexopark\\NexoPark.API\\obj\\",
+      "outputPath": "B:\\Projetos\\nexopark\\src\\NexoPark.API\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Amaro\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -31,7 +69,14 @@
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "B:\\Projetos\\nexopark\\src\\NexoPark.Core\\NexoPark.Core.csproj": {
+              "projectPath": "B:\\Projetos\\nexopark\\src\\NexoPark.Core\\NexoPark.Core.csproj"
+            },
+            "B:\\Projetos\\nexopark\\src\\NexoPark.Infra\\NexoPark.Infra.csproj": {
+              "projectPath": "B:\\Projetos\\nexopark\\src\\NexoPark.Infra\\NexoPark.Infra.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

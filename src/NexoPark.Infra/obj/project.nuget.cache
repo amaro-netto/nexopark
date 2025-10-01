@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "PAEbdtGoBEM=",
+  "dgSpecHash": "8F2fu4dJTgs=",
   "success": true,
-  "projectFilePath": "B:\\Projetos\\nexopark\\NexoPark.Infra\\NexoPark.Infra.csproj",
+  "projectFilePath": "B:\\Projetos\\nexopark\\src\\NexoPark.Infra\\NexoPark.Infra.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

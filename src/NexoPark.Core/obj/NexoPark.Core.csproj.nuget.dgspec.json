@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "B:\\Projetos\\nexopark\\NexoPark.Core\\NexoPark.Core.csproj": {}
+    "B:\\Projetos\\nexopark\\src\\NexoPark.Core\\NexoPark.Core.csproj": {}
   },
   "projects": {
-    "B:\\Projetos\\nexopark\\NexoPark.Core\\NexoPark.Core.csproj": {
+    "B:\\Projetos\\nexopark\\src\\NexoPark.Core\\NexoPark.Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "B:\\Projetos\\nexopark\\NexoPark.Core\\NexoPark.Core.csproj",
+        "projectUniqueName": "B:\\Projetos\\nexopark\\src\\NexoPark.Core\\NexoPark.Core.csproj",
         "projectName": "NexoPark.Core",
-        "projectPath": "B:\\Projetos\\nexopark\\NexoPark.Core\\NexoPark.Core.csproj",
+        "projectPath": "B:\\Projetos\\nexopark\\src\\NexoPark.Core\\NexoPark.Core.csproj",
         "packagesPath": "C:\\Users\\Amaro\\.nuget\\packages\\",
-        "outputPath": "B:\\Projetos\\nexopark\\NexoPark.Core\\obj\\",
+        "outputPath": "B:\\Projetos\\nexopark\\src\\NexoPark.Core\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Amaro\\AppData\\Roaming\\NuGet\\NuGet.Config"
