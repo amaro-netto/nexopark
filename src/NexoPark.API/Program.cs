@@ -1,14 +1,15 @@
 using System.Security.Claims;
 using System.Text;
 using DotNetEnv;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.JwtBearer; // Necessário para JwtBearerDefaults
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models; // Importante para a configuração do Swagger/JWT
-using NexoPark.Core.DTOs;
-using NexoPark.Core.Services;
+using Microsoft.IdentityModel.Tokens; // Necessário para SymmetricSecurityKey, TokenValidationParameters
+using Microsoft.OpenApi.Models; 
+using NexoPark.Core.Constants; // <-- Crucial para AppRoles (Passo 3.4)
+using NexoPark.Core.DTOs; // <-- DTOs (Passo 3.1)
+using NexoPark.Core.Services; // <-- IAuthService, IJwtService (Passo 3.1)
 using NexoPark.Infra.Context;
-using NexoPark.Infra.Services;
+using NexoPark.Infra.Services; // <-- AuthService, JwtService (Passo 3.1)
 
 // 1. Carrega as variáveis do .env (DB e JWT)
 Env.Load();
