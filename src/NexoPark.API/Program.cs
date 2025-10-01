@@ -68,6 +68,10 @@ builder.Services.AddAuthorization(options =>
 // Registrar Serviços para Injeção de Dependência (DIP)
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthService, AuthService>(); 
+// Adições para Veículo
+builder.Services.AddScoped<IVeiculoRepository, VeiculoRepository>(); // Repository Pattern
+builder.Services.AddScoped<IVeiculoService, VeiculoService>(); // Service de Negócio
+
 
 
 // Add Swagger/OpenAPI support
@@ -137,6 +141,41 @@ app.MapGet("/editor-or-admin", (HttpContext http) =>
     return Results.Ok($"Bem-vindo, {http.User.FindFirst(ClaimTypes.Role)?.Value} {email}! Acesso de Leitura/Escrita.");
 })
 .RequireAuthorization("RequireEditorOrAdmin"); // Finaliza com ;
+
+// 4. Rota POST para criar Veículo (Protegida)
+app.MapPost("/veiculos", async (VeiculoRequest request, IVeiculoService veiculoService, HttpContext http) =>
+{
+    // Captura o email do token (ClaimTypes.Name)
+    var administradorEmail = http.User.FindFirst(ClaimTypes.Name)?.Value;
+
+    if (string.IsNullOrEmpty(administradorEmail))
+    {
+        return Results.Unauthorized();
+    }
+    
+    try
+    {
+        var veiculo = await veiculoService.CriarVeiculoAsync(request, administradorEmail);
+        // Resposta 201 Created com o corpo do novo recurso
+        return Results.Created($"/veiculos/{veiculo.Id}", veiculo); 
+    }
+    catch (InvalidOperationException ex)
+    {
+        // Erro de regra de negócio (ex: Placa já existe)
+        return Results.Conflict(new { error = ex.Message }); 
+    }
+    catch (UnauthorizedAccessException)
+    {
+        return Results.Forbid();
+    }
+    catch (Exception)
+    {
+        return Results.Problem("Ocorreu um erro interno ao registrar o veículo.");
+    }
+})
+// Requer Admin OU Editor para criar veículos
+.RequireAuthorization("RequireEditorOrAdmin");
+// .WithOpenApi(); // MANTEMOS COMENTADO
 
 // Rota Home
 app.MapGet("/", () => "NexoPark API está rodando!"); // Finaliza com ;
