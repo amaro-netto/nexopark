@@ -136,7 +136,7 @@ app.MapGet("/admin-only", (HttpContext http) =>
     var email = http.User.FindFirst(ClaimTypes.Name)?.Value;
     return Results.Ok($"Bem-vindo, Admin {email}! Acesso exclusivo.");
 })
-.RequireAuthorization("RequireAdminRole"); // Finaliza com ;
+.RequireAuthorization("RequireAdminRole");
 
 // 3. Rota Protegida com Autorização (TESTE 2: Acesso para Admin ou Editor)
 app.MapGet("/editor-or-admin", (HttpContext http) =>
@@ -144,7 +144,7 @@ app.MapGet("/editor-or-admin", (HttpContext http) =>
     var email = http.User.FindFirst(ClaimTypes.Name)?.Value;
     return Results.Ok($"Bem-vindo, {http.User.FindFirst(ClaimTypes.Role)?.Value} {email}! Acesso de Leitura/Escrita.");
 })
-.RequireAuthorization("RequireEditorOrAdmin"); // Finaliza com ;
+.RequireAuthorization("RequireEditorOrAdmin");
 
 // 4. Rota POST para criar Veículo (Protegida)
 app.MapPost("/veiculos", async (VeiculoRequest request, IVeiculoService veiculoService, HttpContext http) =>
@@ -156,17 +156,17 @@ app.MapPost("/veiculos", async (VeiculoRequest request, IVeiculoService veiculoS
     {
         return Results.Unauthorized();
     }
-    
+
     try
     {
         var veiculo = await veiculoService.CriarVeiculoAsync(request, administradorEmail);
         // Resposta 201 Created com o corpo do novo recurso
-        return Results.Created($"/veiculos/{veiculo.Id}", veiculo); 
+        return Results.Created($"/veiculos/{veiculo.Id}", veiculo);
     }
     catch (InvalidOperationException ex)
     {
         // Erro de regra de negócio (ex: Placa já existe)
-        return Results.Conflict(new { error = ex.Message }); 
+        return Results.Conflict(new { error = ex.Message });
     }
     catch (UnauthorizedAccessException)
     {
@@ -176,12 +176,22 @@ app.MapPost("/veiculos", async (VeiculoRequest request, IVeiculoService veiculoS
     {
         return Results.Problem("Ocorreu um erro interno ao registrar o veículo.");
     }
+});
+
+// 5. Rota GET para retornar todos os Veículos (Protegida)
+app.MapGet("/veiculos", async (IVeiculoService veiculoService) =>
+{
+    var veiculos = await veiculoService.ListarVeiculosAsync();
+    
+    // Retorna 200 OK. Se a lista estiver vazia, retorna uma lista vazia ([])
+    return Results.Ok(veiculos);
 })
+
 // Requer Admin OU Editor para criar veículos
 .RequireAuthorization("RequireEditorOrAdmin");
 // .WithOpenApi(); // MANTEMOS COMENTADO
 
 // Rota Home
-app.MapGet("/", () => "NexoPark API está rodando!"); // Finaliza com ;
+app.MapGet("/", () => "NexoPark API está rodando!");
 
 app.Run();

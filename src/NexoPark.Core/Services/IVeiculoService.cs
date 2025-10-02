@@ -8,5 +8,7 @@ namespace NexoPark.Core.Services
     {
         // Cria um veículo e o associa ao administrador que está logado (identificado pelo seu email).
         Task<Veiculo> CriarVeiculoAsync(VeiculoRequest request, string administradorEmail);
+        // NOVO: Lista todos os veículos
+        Task<List<Veiculo>> ListarVeiculosAsync(); 
     }
 }

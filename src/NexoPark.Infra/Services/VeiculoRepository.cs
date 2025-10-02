@@ -26,5 +26,14 @@ namespace NexoPark.Infra.Services
             return await _context.Veiculos
                 .FirstOrDefaultAsync(v => v.Placa == placa);
         }
+        // IMPLEMENTAÇÃO DE GET ALL
+        public async Task<List<Veiculo>> GetAllAsync()
+        {
+            // Inclui o Administrador que registrou para fins de auditoria/exibição
+            return await _context.Veiculos
+                .Include(v => v.Administrador)
+                .OrderByDescending(v => v.DataRegistro)
+                .ToListAsync();
+        }
     }
 }

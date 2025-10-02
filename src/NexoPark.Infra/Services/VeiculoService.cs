@@ -24,6 +24,8 @@ namespace NexoPark.Infra.Services
             var existingVehicle = await _veiculoRepository.GetByPlacaAsync(request.Placa);
             if (existingVehicle != null)
             {
+                // DRY: Retornar a Entidade existente se a regra de negócio permitir, 
+                // ou lançar exceção (como fizemos).
                 throw new InvalidOperationException($"O veículo com a placa {request.Placa} já está registrado.");
             }
 
@@ -33,7 +35,6 @@ namespace NexoPark.Infra.Services
             
             if (admin == null)
             {
-                // Isso não deve acontecer se o JWT for válido, mas é uma verificação de segurança.
                 throw new UnauthorizedAccessException("Administrador logado não encontrado."); 
             }
 
@@ -49,6 +50,13 @@ namespace NexoPark.Infra.Services
             await _veiculoRepository.AddAsync(novoVeiculo);
             
             return novoVeiculo;
+        }
+        
+        // IMPLEMENTAÇÃO DE LISTAGEM
+        public async Task<List<Veiculo>> ListarVeiculosAsync()
+        {
+            // KISS: A lógica é simples; apenas chama o Repository para obter todos os veículos.
+            return await _veiculoRepository.GetAllAsync();
         }
     }
 }
