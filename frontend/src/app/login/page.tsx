@@ -2,8 +2,9 @@
 import { useState } from 'react';
 import axios from 'axios';
 
-// Configuração Base: Use o endereço da sua API
-const API_BASE_URL = 'http://localhost:5196'; 
+// MUDANÇA: API_BASE_URL é agora o proxy local configurado no next.config.js
+// '/api' será redirecionado para 'http://localhost:5196'
+const API_BASE_URL = '/api'; 
 
 export default function LoginPage() {
   // Credenciais padrões para facilitar o teste local
@@ -16,13 +17,13 @@ export default function LoginPage() {
     setMessage('Tentando logar...');
 
     try {
-      // 1. Faz a requisição de POST para o endpoint de login da API
+      // 1. A requisição vai para /api/login (o proxy faz o resto)
       const response = await axios.post(`${API_BASE_URL}/login`, { email, senha });
       
       const token = response.data.token;
       
       // 2. ARMAZENAMENTO TEMPORÁRIO PARA DEBUG: 
-      // Em produção, isso seria perigoso (XSS) e deveria ser HttpOnly Cookie.
+      // Em produção, deve ser substituído por HttpOnly Cookie.
       localStorage.setItem('userToken', token);
       
       setMessage(`Login bem-sucedido! Token armazenado para testes. Redirecionando...`);
@@ -33,12 +34,12 @@ export default function LoginPage() {
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         if (error.response.status === 401) {
-             setMessage('Erro: Credenciais inválidas.');
+             setMessage('Erro: Credenciais inválidas. Verifique usuário/senha.');
         } else {
-             setMessage(`Erro: ${error.response.data.error || 'Falha na comunicação com a API.'}`);
+             setMessage(`Erro HTTP ${error.response.status}: ${error.response.data.error || 'Falha na comunicação com a API.'}`);
         }
       } else {
-        setMessage('Erro de rede ou interno.');
+        setMessage('Erro de rede ou interno. Certifique-se de que o Backend (.NET) está rodando.');
       }
     }
   };
@@ -77,7 +78,7 @@ export default function LoginPage() {
           Login
         </button>
         
-        {message && <p className="mt-4 text-center text-sm font-medium">{message}</p>}
+        {message && <p className={`mt-4 text-center text-sm font-medium ${message.includes('Erro') ? 'text-red-500' : 'text-green-600'}`}>{message}</p>}
       </form>
     </div>
   );
