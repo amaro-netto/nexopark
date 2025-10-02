@@ -88,7 +88,8 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "Bearer"
     });
 
-    // Definir a política de CORS
+    // Definir a política de 
+    /*
     builder.Services.AddCors(options =>
     {
         options.AddPolicy("CorsPolicy",
@@ -98,7 +99,9 @@ builder.Services.AddSwaggerGen(c =>
             .AllowAnyHeader()
             .AllowCredentials()); // Necessário para futura autenticação com HttpOnly cookies
     });
+    */
 });
+
 
 var app = builder.Build();
 
@@ -112,11 +115,12 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // USAR A POLÍTICA DE CORS AQUI (DEVE VIR ANTES DE UseAuthentication/UseAuthorization)
-app.UseCors("CorsPolicy"); 
-
+/*app.UseCors("CorsPolicy"); 
+*/
 // Adicionar Middlewares de Autenticação e Autorização (ORDEM IMPORTANTE!)
 app.UseAuthentication();
 app.UseAuthorization();
+
 
 // 1. Rota de Login (Pública)
 app.MapPost("/login", async (LoginRequest request, IAuthService authService) =>
