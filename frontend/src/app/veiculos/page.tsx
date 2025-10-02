@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 // Configuração Base: Endereço da sua API
 const API_BASE_URL = 'http://localhost:5196'; 
@@ -20,32 +21,34 @@ export default function VeiculosPage() {
   const [veiculos, setVeiculos] = useState<Veiculo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  
-  // NOTE: Em produção, o token seria lido de um HttpOnly Cookie
-  // Aqui, vamos usar um token mockado APENAS para testar a requisição
-  const MOCK_TOKEN = "DEBUG_TOKEN_ADMIN"; 
+  const router = useRouter(); 
 
   useEffect(() => {
     const fetchVeiculos = async () => {
-      // 1. Verificar se estamos logados (simulação)
-      if (!MOCK_TOKEN) {
-        setError("Não autorizado. Por favor, faça login.");
-        setLoading(false);
+      // 1. LÊ O TOKEN REAL DO LOCALSTORAGE (armazenamento inseguro, apenas para teste)
+      const token = localStorage.getItem('userToken');
+
+      if (!token) {
+        // Se não houver token, redireciona para login
+        router.push('/login');
         return;
       }
 
       try {
         const response = await axios.get(`${API_BASE_URL}/veiculos`, {
           headers: {
-            // 2. Envia o token para a API para autorização
-            Authorization: `Bearer ${MOCK_TOKEN}`, 
+            // 2. Envia o token REAL no cabeçalho de Autorização
+            Authorization: `Bearer ${token}`, 
           }
         });
         setVeiculos(response.data);
       } catch (err) {
         if (axios.isAxiosError(err) && err.response) {
           if (err.response.status === 401 || err.response.status === 403) {
-            setError("Você não tem permissão para visualizar esta página.");
+            // Token expirou ou foi rejeitado: limpa e redireciona
+            localStorage.removeItem('userToken');
+            router.push('/login');
+            return;
           } else {
             setError(`Erro ao carregar dados: ${err.response.statusText}`);
           }
@@ -58,7 +61,7 @@ export default function VeiculosPage() {
     };
     
     fetchVeiculos();
-  }, []);
+  }, [router]);
 
   if (loading) return <div className="text-center mt-8">Carregando veículos...</div>;
   if (error) return <div className="text-center mt-8 text-red-600">Erro: {error}</div>;
@@ -66,12 +69,12 @@ export default function VeiculosPage() {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6">Lista de Veículos Registrados</h1>
-      <p className="mb-4 text-sm text-gray-600">
-        (DEBUG: Usando MOCK_TOKEN para testar a rota protegida.)
+      <p className="mb-4 text-sm text-red-600 font-bold">
+        ⚠️ ATENÇÃO: Token armazenado no localStorage, inseguro para produção.
       </p>
       
       {veiculos.length === 0 ? (
-        <p className="text-center text-gray-500">Nenhum veículo encontrado. Crie um novo via Swagger.</p>
+        <p className="text-center text-gray-500">Nenhum veículo encontrado. Por favor, use o Swagger para criar veículos e recarregue.</p>
       ) : (
         <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
           <thead className="bg-gray-800 text-white">
@@ -96,6 +99,15 @@ export default function VeiculosPage() {
           </tbody>
         </table>
       )}
+      <button 
+        onClick={() => {
+            localStorage.removeItem('userToken');
+            router.push('/login');
+        }} 
+        className="mt-4 bg-red-500 text-white p-2 rounded hover:bg-red-600"
+      >
+        Logout
+      </button>
     </div>
   );
 }

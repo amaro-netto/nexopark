@@ -6,8 +6,9 @@ import axios from 'axios';
 const API_BASE_URL = 'http://localhost:5196'; 
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
+  // Credenciais padrões para facilitar o teste local
+  const [email, setEmail] = useState('admin@nexopark.com'); 
+  const [senha, setSenha] = useState('admin123');
   const [message, setMessage] = useState('');
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -15,15 +16,19 @@ export default function LoginPage() {
     setMessage('Tentando logar...');
 
     try {
+      // 1. Faz a requisição de POST para o endpoint de login da API
       const response = await axios.post(`${API_BASE_URL}/login`, { email, senha });
       
-      // IDEAL: O token seria salvo em um HttpOnly Cookie aqui
-      // Por enquanto, apenas exibimos uma mensagem de sucesso
       const token = response.data.token;
-      setMessage(`Login bem-sucedido! Token obtido: ${token.substring(0, 20)}...`);
+      
+      // 2. ARMAZENAMENTO TEMPORÁRIO PARA DEBUG: 
+      // Em produção, isso seria perigoso (XSS) e deveria ser HttpOnly Cookie.
+      localStorage.setItem('userToken', token);
+      
+      setMessage(`Login bem-sucedido! Token armazenado para testes. Redirecionando...`);
 
-      // Aqui você faria o redirecionamento para o dashboard
-      // window.location.href = '/veiculos';
+      // 3. Redireciona para a página de veículos
+      window.location.href = '/veiculos';
 
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {

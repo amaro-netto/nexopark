@@ -4,6 +4,7 @@
 *.user
 *.useros
 *.sln.docstates
+DebugTokenValidator.cs
 
 # Arquivos de Build .NET/C#
 [Bb]in/
