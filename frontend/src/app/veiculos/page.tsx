@@ -1,10 +1,10 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import NovoVeiculo from './NovoVeiculo'; // Importa o novo componente
 
-// Configuração Base: Endereço da sua API
-const API_BASE_URL = 'http://localhost:5196'; 
+const API_BASE_URL = '/api'; 
 
 interface Veiculo {
   id: string;
@@ -21,60 +21,82 @@ export default function VeiculosPage() {
   const [veiculos, setVeiculos] = useState<Veiculo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [token, setToken] = useState<string | null>(null); // Estado para o token
   const router = useRouter(); 
 
-  useEffect(() => {
-    const fetchVeiculos = async () => {
-      // 1. LÊ O TOKEN REAL DO LOCALSTORAGE (armazenamento inseguro, apenas para teste)
-      const token = localStorage.getItem('userToken');
-
-      if (!token) {
-        // Se não houver token, redireciona para login
+  // Função para buscar veículos - será chamada no load e após o registro
+  const fetchVeiculos = useCallback(async (authToken: string) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/veiculos`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`, 
+        }
+      });
+      setVeiculos(response.data);
+    } catch (err) {
+      if (axios.isAxiosError(err) && (err.response?.status === 401 || err.response?.status === 403)) {
+        // Token expirou/foi rejeitado: limpa e redireciona para login
+        localStorage.removeItem('userToken');
         router.push('/login');
         return;
       }
-
-      try {
-        const response = await axios.get(`${API_BASE_URL}/veiculos`, {
-          headers: {
-            // 2. Envia o token REAL no cabeçalho de Autorização
-            Authorization: `Bearer ${token}`, 
-          }
-        });
-        setVeiculos(response.data);
-      } catch (err) {
-        if (axios.isAxiosError(err) && err.response) {
-          if (err.response.status === 401 || err.response.status === 403) {
-            // Token expirou ou foi rejeitado: limpa e redireciona
-            localStorage.removeItem('userToken');
-            router.push('/login');
-            return;
-          } else {
-            setError(`Erro ao carregar dados: ${err.response.statusText}`);
-          }
-        } else {
-          setError('Erro de rede.');
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchVeiculos();
+      setError('Erro ao carregar dados. Verifique a API.');
+    } finally {
+      setLoading(false);
+    }
   }, [router]);
 
-  if (loading) return <div className="text-center mt-8">Carregando veículos...</div>;
+  // Efeito principal: verifica token e inicia a busca
+  useEffect(() => {
+    const storedToken = localStorage.getItem('userToken');
+    setToken(storedToken); // Atualiza o estado do token
+
+    if (!storedToken) {
+      router.push('/login');
+      return;
+    }
+    
+    // Inicia a busca (com o token)
+    fetchVeiculos(storedToken);
+  }, [router, fetchVeiculos]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('userToken');
+    router.push('/login');
+  };
+  
+  // Função para recarregar a lista (passada para o NovoVeiculo)
+  const handleVeiculoCreated = () => {
+      // Recarrega a lista após a criação bem-sucedida
+      if(token) fetchVeiculos(token); 
+  }
+
+  if (loading || !token) return <div className="text-center mt-8">Carregando...</div>;
   if (error) return <div className="text-center mt-8 text-red-600">Erro: {error}</div>;
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">Lista de Veículos Registrados</h1>
+    <div className="container mx-auto p-8">
+      <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">Gestão de Veículos</h1>
+          <button 
+            onClick={handleLogout} 
+            className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition"
+          >
+            Logout
+          </button>
+      </div>
+
+      <NovoVeiculo onSuccess={handleVeiculoCreated} token={token} /> 
+
+      <h2 className="text-2xl font-bold mb-4">Lista de Registros</h2>
       <p className="mb-4 text-sm text-red-600 font-bold">
-        ⚠️ ATENÇÃO: Token armazenado no localStorage, inseguro para produção.
+        ⚠️ ATENÇÃO: Token armazenado no localStorage. **INSEGURO** para produção.
       </p>
       
       {veiculos.length === 0 ? (
-        <p className="text-center text-gray-500">Nenhum veículo encontrado. Por favor, use o Swagger para criar veículos e recarregue.</p>
+        <p className="text-center text-gray-500 p-10 border rounded-lg">
+            Nenhum veículo encontrado. Registre um novo acima.
+        </p>
       ) : (
         <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
           <thead className="bg-gray-800 text-white">
@@ -99,15 +121,6 @@ export default function VeiculosPage() {
           </tbody>
         </table>
       )}
-      <button 
-        onClick={() => {
-            localStorage.removeItem('userToken');
-            router.push('/login');
-        }} 
-        className="mt-4 bg-red-500 text-white p-2 rounded hover:bg-red-600"
-      >
-        Logout
-      </button>
     </div>
   );
 }

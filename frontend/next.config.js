@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    // Configuração do Proxy Reverso para desenvolvimento
+    // Configuração do Proxy Reverso para ambiente de desenvolvimento
     async rewrites() {
         return [
             {
@@ -9,7 +9,7 @@ const nextConfig = {
                 // O destino é o Backend .NET (porta 5196)
                 destination: 'http://localhost:5196/:path*', 
             },
-        ]
+        ];
     }
 };
 
