@@ -88,20 +88,16 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "Bearer"
     });
 
-    // Bloco COMENTADO para resolver o erro CS0103.
-    // A funcionalidade de segurança no Swagger UI não estará visível, mas a API funciona.
-    /*
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    // Definir a política de CORS
+    builder.Services.AddCors(options =>
     {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference { Type = OpenApiReferenceType.SecurityScheme, Id = "Bearer" } 
-            },
-            Array.Empty<string>()
-        }
+        options.AddPolicy("CorsPolicy",
+        builder => builder
+            .WithOrigins("http://localhost:3000") // Permite o Frontend Next.js
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials()); // Necessário para futura autenticação com HttpOnly cookies
     });
-    */
 });
 
 var app = builder.Build();
@@ -114,6 +110,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// USAR A POLÍTICA DE CORS AQUI (DEVE VIR ANTES DE UseAuthentication/UseAuthorization)
+app.UseCors("CorsPolicy"); 
 
 // Adicionar Middlewares de Autenticação e Autorização (ORDEM IMPORTANTE!)
 app.UseAuthentication();
