@@ -7,52 +7,53 @@
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![Status do Projeto](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow)
 
----
+## 📖 Descrição
 
-### **Índice**
+O **NexoPark** é uma API RESTful desenvolvida para o desafio de projeto da trilha de .NET. O objetivo foi criar um sistema robusto de gestão de estacionamentos utilizando **Minimal APIs** do .NET 8, focando em performance e simplicidade.
 
-- [NexoPark: API de Gestão de Veículos](#nexopark-api-de-gestão-de-veículos)
-    - [**Índice**](#índice)
-    - [📝 **Descrição do Projeto**](#-descrição-do-projeto)
-      - [⚙️ **Tecnologias Utilizadas**](#️-tecnologias-utilizadas)
-      - [📁 **Estrutura do Projeto**](#-estrutura-do-projeto)
-      - [📈 **Fluxo de Funcionamento**](#-fluxo-de-funcionamento)
-      - [🚀 **Funcionalidades e Demonstração**](#-funcionalidades-e-demonstração)
-      - [💻 **Como Usar a Aplicação**](#-como-usar-a-aplicação)
-      - [👥 **Equipe do Projeto**](#-equipe-do-projeto)
-      - [✅ **Conclusão**](#-conclusão)
-      - [📸 **Prévia do Projeto**](#-prévia-do-projeto)
+O projeto vai além de um simples CRUD, implementando regras de negócio reais, autenticação segura via **JWT (JSON Web Tokens)** e seguindo os princípios da **Clean Architecture** para garantir escalabilidade e testabilidade.
 
----
+## 🚀 Funcionalidades
 
-### 📝 **Descrição do Projeto**
+Com base no desenvolvimento realizado, o sistema entrega:
 
-O NexoPark é uma API RESTful desenvolvida com **Minimal APIs do .NET**, focada no registro e gestão de veículos. O objetivo principal é fornecer uma plataforma robusta e segura para o controle de um estacionamento, incluindo a autenticação de administradores com diferentes níveis de acesso via **JWT (JSON Web Tokens)**.
+- **Autenticação e Autorização:**
+  - Login administrativo com validação segura.
+  - Geração de Token JWT (Bearer).
+  - Controle de acesso baseado em perfis: `Administrador` (Acesso total) e `Editor` (Acesso restrito).
+- **Gestão de Veículos:**
+  - Cadastro, Listagem, Atualização e Remoção de veículos.
+  - Validação de placas e dados de entrada.
+- **Documentação:**
+  - Interface Swagger/OpenAPI interativa configurada para suportar autenticação JWT.
+- **Qualidade de Código:**
+  - Testes de Unidade (Unit Tests).
+  - Testes de Integração e Persistência.
+  - Testes de Requisição (Endpoints).
 
-O projeto segue princípios de **Clean Architecture** e utiliza **Entity Framework Core** para persistência de dados. A segurança e a manutenibilidade são prioridades, com foco em testes abrangentes (unidade, integração e requisição) e documentação via **Swagger/OpenAPI**.
+## 🛠️ Tecnologias Utilizadas
 
-#### ⚙️ **Tecnologias Utilizadas**
 - **Linguagem:** C#
 - **Framework:** .NET 8 (Minimal APIs)
-- **Persistência:** Entity Framework Core (EF Core)
-- **Banco de Dados:** PostgreSQL (sugerido via Docker)
+- **Banco de Dados:** PostgreSQL (via Docker)
+- **ORM:** Entity Framework Core (com Migrations e Seeds)
 - **Autenticação:** JWT (JSON Web Tokens)
-- **Documentação:** Swagger/OpenAPI
 - **Testes:** xUnit
-- **Containerização/DevOps:** Docker, GitHub Actions/GitLab CI
+- **Documentação:** Swashbuckle (Swagger)
 
-#### 📁 **Estrutura do Projeto**
-A arquitetura é organizada em uma Solution (`.sln`) com projetos separados para promover a **Separação de Preocupações (Separation of Concerns)** e o **DIP (Dependency Inversion Principle)**.
+## 🏗️ Estrutura do Projeto (Clean Architecture)
 
-```
+A solução foi estruturada para promover a Separação de Preocupações (SoC) e Inversão de Dependência (DIP):
+
+```text
 nexopark/
 ├── src/
-│   ├── NexoPark.API/    # Endpoints HTTP e configuração da aplicação (Camada de Apresentação)
-│   ├── NexoPark.Core/   # Regras de Negócio, Entidades e Abstrações/Interfaces (Camada de Domínio)
-│   └── NexoPark.Infra/  # Contexto de Dados (EF Core), Repositórios e Serviços de Infraestrutura (Camada de Persistência)
+│   ├── NexoPark.API/    # Camada de Apresentação (Endpoints e Configurações)
+│   ├── NexoPark.Core/   # Camada de Domínio (Entidades e Interfaces)
+│   └── NexoPark.Infra/  # Camada de Infraestrutura (EF Core, Repositórios)
 └── tests/
-├── NexoPark.Tests.Unit/      # Testes de unidade para a lógica do Core
-└── NexoPark.Tests.Integration/ # Testes de Persistência e End-to-End da API
+    ├── NexoPark.Tests.Unit/      # Testes de regras de negócio
+    └── NexoPark.Tests.Integration/ # Testes de banco e fluxo completo
 ```
 #### 📈 **Fluxo de Funcionamento**
 O fluxo de autenticação e acesso aos recursos é o seguinte:
@@ -88,27 +89,62 @@ sequenceDiagram
         API-->>C: 401 Unauthorized
     end
 ```
-#### 🚀 **Funcionalidades e Demonstração**
-**Principais Funcionalidades**
-- **Autenticação e Autorização por perfil (Admin/Editor) via JWT.**
+## 🔌 Endpoints Principais
 
-- CRUD (Create, Read, Update, Delete) de Veículos.
+| Método | Rota | Descrição | Acesso |
+|---|---|---|---|
+| `POST` | `/login` | Autentica o usuário e retorna o Token JWT | Público |
+| `POST` | `/veiculos` | Cadastra um novo veículo | Adm/Editor |
+| `GET` | `/veiculos` | Lista todos os veículos | Adm/Editor |
+| `GET` | `/veiculos/{id}` | Busca um veículo por ID | Adm/Editor |
+| `PUT` | `/veiculos/{id}` | Atualiza dados do veículo | Adm |
+| `DELETE` | `/veiculos/{id}` | Remove um veículo do sistema | Adm |
 
-- Validação robusta de entrada de dados.
+## ⚙️ Como Executar
 
-- Documentação automática da API via Swagger/OpenAPI.
+### Pré-requisitos
+- .NET 8 SDK instalado.
+- Docker (opcional, caso queira rodar o banco em container).
+- Editor de código (VS Code ou Visual Studio).
 
-**Como funciona**
-(Será detalhado após a implementação dos endpoints e Swagger)
+### Passo a Passo
 
-#### 💻 **Como Usar a Aplicação**
-(Será detalhado com instruções de Docker e dotnet run nas próximas etapas)
+1. **Clone o repositório:**
+   ```bash
+   git clone [https://github.com/seu-usuario/nexopark.git](https://github.com/seu-usuario/nexopark.git)
+   cd nexopark
+   ```
+
+2. **Configure o Banco de Dados:**
+   No arquivo `appsettings.json`, verifique a string de conexão. Se estiver usando Docker:
+   ```bash
+   docker run --name nexopark-db -e POSTGRES_PASSWORD=suasenha -p 5432:5432 -d postgres
+   ```
+
+3. **Execute as Migrações:**
+   Para criar as tabelas e o administrador padrão (Seed):
+   ```bash
+   dotnet ef database update --project src/NexoPark.Infra --startup-project src/NexoPark.API
+   ```
+
+4. **Inicie a Aplicação:**
+   ```bash
+   dotnet run --project src/NexoPark.API
+   ```
+
+5. **Acesse o Swagger:**
+   Abra o navegador em `http://localhost:5000/swagger` (ou a porta indicada no terminal).
+
+## 🧪 Executando os Testes
+
+Para garantir a integridade da aplicação, execute o comando na raiz da solução:
+
+```bash
+dotnet test
+```
+
+---
+Desenvolvido como parte do desafio técnico de .NET.
 
 #### 👥 **Equipe do Projeto**
 <a href="https://github.com/amaro-netto" title="Amaro Netto"><img width="180" src="https://github.com/user-attachments/assets/b7a3a1bf-304a-4974-b75f-1d620ad6ecf1"/></a>
-
-#### ✅ **Conclusão**
-(Será preenchido na conclusão do LAB)
-
-#### 📸 **Prévia do Projeto**
-(Será adicionado o link para o Swagger/Imagens aqui)
